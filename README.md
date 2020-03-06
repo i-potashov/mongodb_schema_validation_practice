@@ -41,6 +41,7 @@ POST /cards
 ### Todos
 
  - Add automated testing
+ - Add ObjectId validations
  
 ### License
 

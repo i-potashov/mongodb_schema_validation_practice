@@ -1,10 +1,26 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
-const isEmail = require('validator/lib/isEmail');
+const validate = require('mongoose-validator');
 const bcrypt = require('bcryptjs');
 const uniqueValidator = require('mongoose-unique-validator');
 const LoginError = require('../errors/LoginError');
 const { INVALID_LINK, INVALID_EMAIL} = require('../configuration/constants');
+
+
+const urlValidator = [
+  validate({
+    validator: 'isURL',
+    message: INVALID_LINK,
+    httpStatus: 400,
+  })
+];
+
+const emailValidator = [
+  validate({
+    validator: 'isEmail',
+    message: INVALID_EMAIL,
+    httpStatus: 400,
+  })
+];
 
 
 
@@ -24,20 +40,14 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     required: true,
-    validate: {
-      validator: (v) => validator.isURL(v),
-      message: INVALID_LINK,
-    },
+    validate: urlValidator,
   },
   email: {
     type: String,
     unique: true,
     required: true,
-    validate: {
-      validator: (v) => validator.isEmail(v),
-      message: INVALID_EMAIL,
-    },
     uniqueCaseInsensitive: true,
+    validate: emailValidator,
   },
   password: {
     type: String,
@@ -48,10 +58,23 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.plugin(uniqueValidator);
-userSchema.pre('findOneAndUpdate', function (next) {
-  this.options.runValidators = true;
-  next();
-});
+// userSchema.pre('validate', function (next) {
+// //   console.log("Pre validate hook called");
+// //
+// //   next();
+// // });
+
+// userSchema.pre('findOneAndUpdate', function (next) {
+//   this.options.runValidators = true;
+//   next();
+// });
+
+// userSchema.pre('validate', function(next) {
+//   const err = new Error('something went wrong');
+//   // If you call `next()` with an argument, that argument is assumed to be
+//   // an error.
+//   return next(err);
+// });
 
 userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email })

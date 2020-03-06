@@ -9,6 +9,16 @@ const userRequestCheck = celebrate({
   }),
 });
 
+const signUpRequestCheck = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    about: Joi.string().required().min(2).max(30),
+    avatar: Joi.string().required().uri(),
+    email: Joi.string().required(),
+    password: Joi.string().required().min(8),
+  }),
+});
+
 const cardRequestCheck = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().required().min(2)
@@ -19,4 +29,4 @@ const cardRequestCheck = celebrate({
   }),
 });
 
-module.exports = { userRequestCheck, cardRequestCheck };
+module.exports = { userRequestCheck, cardRequestCheck, signUpRequestCheck };

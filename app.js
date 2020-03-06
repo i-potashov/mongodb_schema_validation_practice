@@ -9,6 +9,7 @@ const { DB, PORT } = require('./configuration/config');
 const { errorHandler } = require('./middlewares/errorHandler');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const { signUpRequestCheck } = require('./modules/validations');
 
 const app = express();
 app.use(bodyParser.json());
@@ -20,13 +21,12 @@ mongoose.connect(DB, {
 });
 
 app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signup', signUpRequestCheck, createUser);
 app.use(auth);
 app.use(routes);
-// Обработчик ошибок celebrate
+
 app.use(errors());
 
-// Централизованный обработчик ошибок
 app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

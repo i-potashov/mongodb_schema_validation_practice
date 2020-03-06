@@ -1,6 +1,13 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
+const validate = require('mongoose-validator');
 const { INVALID_LINK } = require('../configuration/constants');
+
+const urlValidator = [
+  validate({
+    validator: 'isURL',
+    message: INVALID_LINK
+  })
+];
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -12,6 +19,7 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
+    validate: urlValidator,
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -27,6 +35,6 @@ const cardSchema = new mongoose.Schema({
   },
 });
 
-cardSchema.path('link').validate(validator.isURL, INVALID_LINK);
+// cardSchema.path('link').validate(validator.isURL, INVALID_LINK);
 
 module.exports = mongoose.model('card', cardSchema);

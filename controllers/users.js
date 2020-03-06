@@ -15,22 +15,15 @@ module.exports.getUsers = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  const {name, about, avatar, email, password} = req.body;
-  bcrypt.hash(password, 10)
-    .then((hash) => {
-      User.create({
-        name,
-        about,
-        avatar,
-        email,
-        password: hash,
-      });
-    })
-    .then((user) => {
-      console.log(user, '333');
-      res.status(201).send({data: user});
-    })
-    .catch(next);
+    const {name, about, avatar, email, password} = req.body;
+    bcrypt.hash(password, 10)
+      .then((hash) => {
+        User.create({ name, about, avatar, email, password: hash});
+      })
+      .then(user => {
+        res.status(201).send({data: user.name});
+      })
+      .catch(next);
 };
 
 module.exports.login = (req, res, next) => {
